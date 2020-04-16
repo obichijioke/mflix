@@ -1,0 +1,7 @@
+export const SET_TRENDING = 'SET_TRENDING';
+export const SET_DETAILS = 'SET_DETAILS';
+export const SET_LOADING = 'SET_LOADING';
+export const SET_MOVIELIST = 'SET_MOVIELIST';
+export const SET_FEATURED = 'SET_FEATURED';
+export const SET_RELATED = 'SET_RELATED';
+export const SET_SHOWPREVIEW = 'SET_SHOWPREVIEW';
