@@ -1,10 +1,10 @@
 import React,{useContext} from 'react'
-import Card from './layouts/Card'
+import Card from '../layouts/Card'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import MovieContext from '../context/movie/movieContext'
-import Spinner from './Spinner';
+import MovieContext from '../../context/movie/movieContext'
+import Spinner from '../Spinner';
 
  
 function SampleNextArrow(props) {
@@ -35,7 +35,7 @@ function SampleNextArrow(props) {
     );
   }
 
-const SliderContainer = ()=> {
+const MovieSlider = ()=> {
   const movieContext = useContext(MovieContext);
     var settings = {
             infinite: true,
@@ -75,14 +75,15 @@ const SliderContainer = ()=> {
       };
 
       
-        if(movieContext.trending===[]){
+        if(movieContext.movies===[]){
             return <Spinner/>
         }else{
-            return <div style={{width:'75%'}}>
-                    
+            return <div style={{width:'100%'}}>
+                   
             <div style={{position:'relative'}}>
+            <h3 style={{color:'white', paddingTop:'5rem', paddingLeft:'2rem'}}>Movies For You</h3> 
             <Slider {...settings}>
-                {movieContext.trending.map((item, i) =>(
+                {movieContext.movies.map((item, i) =>(
                         <Card key={item.id} carditem={item}/>
                     ))}
             </Slider>  
@@ -92,4 +93,4 @@ const SliderContainer = ()=> {
         }
 }
 
-export default SliderContainer;
+export default MovieSlider;

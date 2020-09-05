@@ -5,7 +5,7 @@ const MovieCard = (props) =>{
     const {title, poster_path, vote_average, release_date, original_name, first_air_date} = props.carditem;
     return (
         <div className='cardItem'>
-        {console.log(title)}
+       
             <img src={`https://image.tmdb.org/t/p/w500/${poster_path}`} alt='galaxy'/>
             <h5>{title === undefined ? original_name : title}</h5>
             <div>

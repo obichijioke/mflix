@@ -2,14 +2,19 @@ import React, {useReducer} from 'react';
 import axios from 'axios'
 import movieContext from './movieContext';
 import MovieReducer from './movieReducer';
-import { SET_DETAILS, SET_TRENDING, SET_LOADING , SET_MOVIELIST, SET_RELATED, SET_SHOWPREVIEW} from '../types'
+import { SET_DETAILS, SET_CASTS, SET_MOVIE_LIST, SET_TRENDING, SET_LOADING, SET_MOVIES, SET_RELATED, SET_SHOWPREVIEW, SET_TVSHOWS, SET_EPISODE_LIST, LOAD_MORE_MOVIES, LOAD_MORE_TVS} from '../types'
 
 const MovieState = props => {
     const initialState = {
         trending: [],
+        tvShows:[],
+        casts:[],
+        episodeList:[],
         movieDetails:{},
         featured: {},
+        movies:[],
         movieList:[],
+        tvList:[],
         relateditems:[],
         preview:"",
         featuredVideo:"",
@@ -28,27 +33,49 @@ const MovieState = props => {
         
     }
 
-    //get movie details
-    const getMovieDetails = async(id) => {
+    //set TvShows
+    const setTvshows = async() =>{
         setLoading();
-        const getdetails = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
-        const details = getdetails.data;
-        const getVideo = await axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
+        const res = await axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=true&page=1&primary_release_year=2020`);
+        dispatch({type: SET_TVSHOWS,
+                payload:res.data.results});
+        
+    }
+
+    //get movie details
+    const getMovieDetails = async(id, movietype) => {
+        setLoading();
+        let details;
+        if(movietype === 'tv'){
+            const getdetails = await axios.get(`https://api.themoviedb.org/3/tv/${id}?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
+             details = getdetails.data;
+
+        }else{
+            const getdetails = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
+             details = getdetails.data;
+        }
+        
+        const getVideo = await axios.get(`https://api.themoviedb.org/3/${movietype}/${id}/videos?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
         let videoUrl;
         if(getVideo.data.results.length < 1){
             videoUrl = null;
         }else{
-            videoUrl = `https://www.youtube.com/watch?v=${getVideo.data.results[0].key}`;
+            if(getVideo.data.results[0].site === 'Vimeo'){
+                videoUrl = `https://vimeo.com/${getVideo.data.results[0].key}`;
+            }else{
+                videoUrl = `https://www.youtube.com/watch?v=${getVideo.data.results[0].key}`;
+            }
+            
         }
         
         dispatch({type: SET_DETAILS,
                 payload:{one:details, two:videoUrl}});
 
-        setRelated(id);
+        setRelated(id, movietype);
     }
 
-    //set movieList
-    const setMovieList = async() =>{
+    //set movies
+    const setMovies = async() =>{
         setLoading();
         const res = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=true&page=1&primary_release_year=2020`);
         const item = Math.floor(Math.random() * res.data.results.length);
@@ -63,16 +90,23 @@ const MovieState = props => {
             videoUrl = `https://www.youtube.com/watch?v=${getVideo.data.results[0].key}`;
         }
         
-        dispatch({type: SET_MOVIELIST,
+        dispatch({type: SET_MOVIES,
                 payload:{one:res.data.results, two:resSecond.data, three:videoUrl}});
     }
-
-    //set setRelated
-    const setRelated = async(id) => {
+    //set TV relatedItems
+    
+    //set Movie RelatedItems
+    const setRelated = async(id, movietype) => {
+        if(movietype === 'tv'){
+            const res = await axios.get(`https://api.themoviedb.org/3/tv/${id}/recommendations?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&page=1`);
+            dispatch({type: SET_RELATED,
+                 payload:{result:res.data.results, movietype:movietype}});
+        }else{
+            const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&page=1`);
+            dispatch({type: SET_RELATED,
+                 payload:{result:res.data.results, movietype:movietype}});
+        }
         
-        const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&page=1`);
-        dispatch({type: SET_RELATED,
-                 payload:res.data.results});
         
     }
 
@@ -90,23 +124,67 @@ const MovieState = props => {
     }
     }
 
+    //set episode list
+    const setEpisodeList = async (tv_id, season_num) =>{
+        const res = await axios.get(`https://api.themoviedb.org/3/tv/${tv_id}/season/${season_num}?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
+            dispatch({type: SET_EPISODE_LIST,
+                 payload:res.data.episodes});
+    }
+
+    //set Casts
+    const setCasts = async(tvId) => {
+        const res = await axios.get(`https://api.themoviedb.org/3/tv/${tvId}/credits?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US`);
+        dispatch({type: SET_CASTS,
+            payload: res.data});
+    }
+
+    //set moviesList
+    const setMovieList = async(movie_type) =>{
+            setLoading();
+            const res = await axios.get(`https://api.themoviedb.org/3/${movie_type}/popular?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&page=1`);
+            dispatch({type: SET_MOVIE_LIST,
+                    payload: {result: res.data.results, moveType: movie_type}});
+        }
+
+    //loadMore
+    const loadMore = async (page, media_type) => {
+        
+        const res = await axios.get(`https://api.themoviedb.org/3/${media_type}/popular?api_key=5a8d140617ee0ca7ca93b93e2c039a50&language=en-US&page=${page}`);
+        
+            dispatch({
+                        type: LOAD_MORE_MOVIES,
+                        payload: res.data.results
+                    });
+        }
+        
+
     return <movieContext.Provider 
         value={{
                 trending:state.trending,
                 featured: state.featured,
-                movieList:state.movieList,
+                tvShows: state.tvShows,
+                movieList: state.movieList,
+                casts: state.casts,
+                movies:state.movies,
                 preview:state.preview,
                 loading:state.loading,
                 relateditems:state.relateditems,
                 movieDetails:state.movieDetails,
                 showPreview:state.showPreview,
                 featuredVideo:state.featuredVideo,
+                episodeList:state.episodeList,
+                tvList:state.tvList,
+                loadMore,
                 setLoading,
                 setTrending,
-                setMovieList,
+                setMovies,
                 setRelated,
                 getMovieDetails,
-                setShowPreview
+                setShowPreview,
+                setTvshows,
+                setEpisodeList,
+                setCasts,
+                setMovieList
             }}>
             {props.children}
             </movieContext.Provider>

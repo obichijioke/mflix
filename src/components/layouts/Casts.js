@@ -1,10 +1,12 @@
+
 import React,{useContext} from 'react'
-import Card from './layouts/Card'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import MovieContext from '../context/movie/movieContext'
-import Spinner from './Spinner';
+import MovieContext from '../../context/movie/movieContext'
+import Spinner from '../Spinner';
+import CastItem from './CastItem'
+import { Col, Row } from 'antd';
 
  
 function SampleNextArrow(props) {
@@ -12,7 +14,7 @@ function SampleNextArrow(props) {
     return (
       <div
         
-        style={{background: "linear-gradient(to left, #14141d, rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', right:'0', top:'0', textAlign: 'center',
+        style={{background: "linear-gradient(to left, rgb(0, 0, 0), rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', right:'0', top:'0', textAlign: 'center',
                 display: 'flex',
                 flexDirection: 'column',zIndex:'1',
                 justifyContent: 'center', cursor:'pointer'}}
@@ -26,7 +28,7 @@ function SampleNextArrow(props) {
     return (
       <div
         
-        style={{background: "linear-gradient(to right, #14141d, rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', textAlign: 'center',top:'0',
+        style={{background: "linear-gradient(to right, rgb(0, 0, 0), rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', textAlign: 'center',top:'0',
                 display: 'flex',
                 flexDirection: 'column',zIndex:'1',
                 justifyContent: 'center', cursor:'pointer'}}
@@ -35,12 +37,12 @@ function SampleNextArrow(props) {
     );
   }
 
-const SliderContainer = ()=> {
+const Casts = ()=> {
   const movieContext = useContext(MovieContext);
     var settings = {
             infinite: true,
             speed: 500,
-            slidesToShow: 6,
+            slidesToShow: 7,
             slidesToScroll: 2,
             initialSlide: 0,
             arrows:true,
@@ -75,21 +77,26 @@ const SliderContainer = ()=> {
       };
 
       
-        if(movieContext.trending===[]){
+        if(movieContext.casts.cast === []){
             return <Spinner/>
         }else{
-            return <div style={{width:'75%'}}>
-                    
+            return <div style={{width:'100%'}}>
+                   
             <div style={{position:'relative'}}>
-            <Slider {...settings}>
-                {movieContext.trending.map((item, i) =>(
-                        <Card key={item.id} carditem={item}/>
-                    ))}
-            </Slider>  
+                <h5 style={{color:'white', paddingTop:'0.5rem', marginBottom:'1rem'}}>Series Cast</h5> 
+                <div style={{display:'flex', overflowY:'scroll'}}>
+                <Row gutter={8}>
+                    {movieContext.casts.cast && movieContext.casts.cast.map((item, i) =>(
+                        <Col span={4}>  
+                            <CastItem key={i} item={item}/>
+                        </Col>
+                        ))}
+                </Row>
+                </div>  
             </div>
       
         </div>
         }
 }
 
-export default SliderContainer;
+export default Casts;

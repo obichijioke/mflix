@@ -1,7 +1,13 @@
 export const SET_TRENDING = 'SET_TRENDING';
+export const SET_TVSHOWS = 'SET_TVSHOWS';
 export const SET_DETAILS = 'SET_DETAILS';
 export const SET_LOADING = 'SET_LOADING';
-export const SET_MOVIELIST = 'SET_MOVIELIST';
+export const SET_MOVIES = 'SET_MOVIES';
 export const SET_FEATURED = 'SET_FEATURED';
 export const SET_RELATED = 'SET_RELATED';
 export const SET_SHOWPREVIEW = 'SET_SHOWPREVIEW';
+export const SET_EPISODE_LIST = 'SET_EPISODE_LIST';
+export const SET_CASTS = 'SET_CASTS';
+export const SET_MOVIE_LIST = 'SET_MOVIE_LIST';
+export const LOAD_MORE_MOVIES = 'LOAD_MORE_MOVIES'
+export const LOAD_MORE_TVS = 'LOAD_MORE_TVS';

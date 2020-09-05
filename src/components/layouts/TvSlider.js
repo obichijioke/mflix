@@ -1,10 +1,10 @@
 import React,{useContext} from 'react'
-import Card from './layouts/Card'
+import Card from '../layouts/Card'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import MovieContext from '../context/movie/movieContext'
-import Spinner from './Spinner';
+import MovieContext from '../../context/movie/movieContext'
+import Spinner from '../Spinner';
 
  
 function SampleNextArrow(props) {
@@ -12,7 +12,7 @@ function SampleNextArrow(props) {
     return (
       <div
         
-        style={{background: "linear-gradient(to left, #14141d, rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', right:'0', top:'0', textAlign: 'center',
+        style={{background: "linear-gradient(to left, #000000, rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', right:'0', top:'0', textAlign: 'center',
                 display: 'flex',
                 flexDirection: 'column',zIndex:'1',
                 justifyContent: 'center', cursor:'pointer'}}
@@ -26,7 +26,7 @@ function SampleNextArrow(props) {
     return (
       <div
         
-        style={{background: "linear-gradient(to right, #14141d, rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', textAlign: 'center',top:'0',
+        style={{background: "linear-gradient(to right, #000000, rgba(67, 67, 67, 0.07))", position:'absolute', width:'10%', height:'100%', textAlign: 'center',top:'0',
                 display: 'flex',
                 flexDirection: 'column',zIndex:'1',
                 justifyContent: 'center', cursor:'pointer'}}
@@ -35,7 +35,7 @@ function SampleNextArrow(props) {
     );
   }
 
-const SliderContainer = ()=> {
+const TvSlider = ()=> {
   const movieContext = useContext(MovieContext);
     var settings = {
             infinite: true,
@@ -51,7 +51,7 @@ const SliderContainer = ()=> {
                   breakpoint: 1024,
                   settings: {
                     slidesToShow: 5,
-                    slidesToScroll: 3,
+                    slidesToScroll: 2,
                     infinite: true,
                     
                   }
@@ -75,16 +75,17 @@ const SliderContainer = ()=> {
       };
 
       
-        if(movieContext.trending===[]){
+        if(movieContext.tvShows===[]){
             return <Spinner/>
         }else{
-            return <div style={{width:'75%'}}>
+            return <div style={{width:'100%', background:'black'}}>
                     
             <div style={{position:'relative'}}>
+            <h3 style={{color:'white', paddingTop:'5rem', paddingLeft:'2rem'}}>TvSeries For You</h3> 
             <Slider {...settings}>
-                {movieContext.trending.map((item, i) =>(
-                        <Card key={item.id} carditem={item}/>
-                    ))}
+            {movieContext.tvShows.slice(0, 10).map((item, i) => (
+                <Card key={item.id} carditem={item}/>        
+            ))}
             </Slider>  
             </div>
       
@@ -92,4 +93,4 @@ const SliderContainer = ()=> {
         }
 }
 
-export default SliderContainer;
+export default TvSlider;
